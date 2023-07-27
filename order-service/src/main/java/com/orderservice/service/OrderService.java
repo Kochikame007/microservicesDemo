@@ -3,10 +3,12 @@ package com.orderservice.service;
 import com.orderservice.dto.InventoryResponse;
 import com.orderservice.dto.OrderLineItemsDto;
 import com.orderservice.dto.OrderRequest;
+import com.orderservice.events.OrderPlacedEvent;
 import com.orderservice.model.Order;
 import com.orderservice.model.OrderLineItem;
 import com.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,9 +23,11 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepo;
-    private final WebClient webClient;
+    private final WebClient.Builder webClient;
 
-    public void placeOrder(OrderRequest or) {
+    private final KafkaTemplate<String , OrderPlacedEvent> kafkaTemplate;
+
+    public String placeOrder(OrderRequest or) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -33,18 +37,21 @@ public class OrderService {
 
 //        call inventory controller to check if the item is available
         List<String> skuCode = order.getOrderLineItemList().stream().map(item -> item.getSkuCode()).toList();
-        InventoryResponse[] result = webClient.get()
-                .uri("http://localhost:8082/api/inventory", uriBuilder -> uriBuilder.queryParam("skuCode", skuCode).build())
+        InventoryResponse[] result = webClient.build().get()
+                .uri("http://inventory-service/api/inventory", uriBuilder -> uriBuilder.queryParam("skuCode", skuCode).build())
                 .retrieve().bodyToMono(InventoryResponse[].class)
                 .block();
 
         boolean allProductInStock = Arrays.stream(result).allMatch(InventoryResponse::isInStock);
 
         if (allProductInStock) {
+
             orderRepo.save(order);
+            kafkaTemplate.send("notificationTopic" , new OrderPlacedEvent(order.getOrderNumber()));
+            return "order placed successfully";
 
         } else {
-            throw new IllegalArgumentException("Product not availble");
+            throw new IllegalArgumentException("Product not available");
         }
 
 

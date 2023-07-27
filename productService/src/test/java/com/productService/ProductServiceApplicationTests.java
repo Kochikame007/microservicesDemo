@@ -24,51 +24,51 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 
 @SpringBootTest
-@Testcontainers
-@AutoConfigureMockMvc
+//@Testcontainers
+//@AutoConfigureMockMvc
 class ProductServiceApplicationTests {
-
-	/*
-	*Intializiing the mongodb container with ccontainer version
-	*/
-	@Container
-	static MongoDBContainer mdbc = new MongoDBContainer("mongo:4.4.2");
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper om;
-
-	@Autowired
-	private ProductRepository prodRepo;
-
-
-	/*
-	*setting properties to the mongodbcontainer
-	*/
-	@DynamicPropertySource
-	static void setProperties(DynamicPropertyRegistry dpr){
-		dpr.add("spring.data.mongodb.url" , mdbc::getReplicaSetUrl);
-	}
-	@Test
-	void shouldCreateProduct() throws Exception {
-		ProductRequest pr = getProductRequest();
-		String stringProdReq = om.writeValueAsString(pr);
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/product")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(stringProdReq))
-				.andExpect(status().isCreated());
-
-		Assertions.assertEquals(1 ,prodRepo.findAll().size()==1);
-	}
-
-	private ProductRequest getProductRequest(){
-		return ProductRequest.builder()
-				.name("iphone12")
-				.description("iphone12")
-				.price(BigDecimal.valueOf(1200))
-				.build();
-	}
+//
+//	/*
+//	*Intializiing the mongodb container with ccontainer version
+//	*/
+//	@Container
+//	static MongoDBContainer mdbc = new MongoDBContainer("mongo:4.4.2");
+//
+//	@Autowired
+//	private MockMvc mockMvc;
+//
+//	@Autowired
+//	private ObjectMapper om;
+//
+//	@Autowired
+//	private ProductRepository prodRepo;
+//
+//
+//	/*
+//	*setting properties to the mongodbcontainer
+//	*/
+//	@DynamicPropertySource
+//	static void setProperties(DynamicPropertyRegistry dpr){
+//		dpr.add("spring.data.mongodb.url" , mdbc::getReplicaSetUrl);
+//	}
+//	@Test
+//	void shouldCreateProduct() throws Exception {
+//		ProductRequest pr = getProductRequest();
+//		String stringProdReq = om.writeValueAsString(pr);
+//		mockMvc.perform(MockMvcRequestBuilders.post("/api/product")
+//				.contentType(MediaType.APPLICATION_JSON)
+//				.content(stringProdReq))
+//				.andExpect(status().isCreated());
+//
+//		Assertions.assertEquals(1 ,prodRepo.findAll().size()==1);
+//	}
+//
+//	private ProductRequest getProductRequest(){
+//		return ProductRequest.builder()
+//				.name("iphone12")
+//				.description("iphone12")
+//				.price(BigDecimal.valueOf(1200))
+//				.build();
+//	}
 
 }

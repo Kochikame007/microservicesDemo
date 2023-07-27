@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>com.inventory-service</groupId>
-    <artifactId>inventory-service</artifactId>
+    <artifactId>inventoryservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>inventory-service</name>
     <description>inventory service</description>
@@ -47,7 +47,22 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>4.0.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+* This class defines the entity that is mapped to the t_inventory table
+* */
 @Entity
 @Table(name = "t_inventory")
 @Getter
